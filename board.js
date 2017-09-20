@@ -41,11 +41,12 @@ class Board {
   changeMode(mode){
     this.mode = parseInt(mode);
     console.log("Changing to the following mode: " + mode);
+    var board = document.getElementById("board");
+    // this.initializeBoard(this.size, this.mode, board);
     switch(mode){
       case "0":  // PvP
         this.firstPlayer = 0
         this.secondPlayer = 1
-        this.customMove = this.setMove();
         break;
       case "1":  // P1vC
         this.firstPlayer = 0
