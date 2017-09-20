@@ -7,6 +7,7 @@ class Board {
     this.end = false;
     this.firstPlayer = 0; // Should have two
     this.secondPlayer = 1; // Should have two
+    this.customMove = null;
     this.score = [
       {  // Human Player #1
          win: 0,
@@ -44,6 +45,7 @@ class Board {
       case "0":  // PvP
         this.firstPlayer = 0
         this.secondPlayer = 1
+        this.customMove = this.setMove();
         break;
       case "1":  // P1vC
         this.firstPlayer = 0
