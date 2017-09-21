@@ -34,6 +34,7 @@ input.modes {
   height: 300px;
   border: solid 1px black;
   border-radius: 10px;
+  background-color: white;
 }
 
 .setting-options {

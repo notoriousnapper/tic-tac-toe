@@ -18,12 +18,6 @@ document.getElementById("start").addEventListener("click",
 });
 
 // Attaching Setting Submit Button
-document.getElementById("setting-submit").addEventListener("click",
-  function(e){
-    b.initializeBoard(document.getElementById("board"));
-    console.log("Settings Set!");
-});
-
 // Clearing Board
 document.getElementById("clear").addEventListener("click",
   function(e){

@@ -10,22 +10,22 @@ class Board {
     this.customMove = null;
     this.score = [
       {  // Human Player #1
-         name: "Human Player 1",
+         name: "Player 1",
          win: 0,
          loss:0
       },
       {  // Human Player #2
-         name: "Human Player 2",
+         name: "Player 2",
          win: 0,
          loss:0
       },
       {  // NPC #1
-         name: "Computer Player 1",
+         name: "Computer 1",
          win: 0,
          loss:0
       },
       {  // NPC #2
-         name: "Computer Player 2",
+         name: "Computer 2",
          win: 0,
          loss:0
       }
@@ -82,6 +82,8 @@ class Board {
   }
 
   setVictory(){
+    var status = document.getElementById("status");
+    status.innerHTML = "Victory!";
     this.end = true;
     if (this.turn){
       this.score[this.firstPlayer].win = this.score[this.firstPlayer].win + 1
@@ -100,17 +102,34 @@ class Board {
     var elem = this.matrix[i][j].elem, value = this.matrix[i][j].value;
     if (value == 0){ // Unassigned board gets assigned
       if (this.turn){
-        elem.style.backgroundColor = "black";
+        // elem.style.backgroundColor = "black";
+        var newE = document.createElement("div");
+        newE.innerHTML = "<img src=\"img/circle.png\"> </img>";
+        elem.append(newE);
+        elem.style.padding = "10px 10px";
+
         this.matrix[i][j].value = 1;
       }
       else {
-        elem.style.backgroundColor = "red";
+        // elem.style.backgroundColor = "red";
+        var newE = document.createElement("div");
+        newE.innerHTML = "<img src=\"img/x.png\"> </img>";
+        elem.append(newE);
+        elem.style.padding = "10px 10px";
+        // elem.style.backgroundImage = "url('img/x.png')";
+        // elem.style.backgroundSize = "100px 100px";
         this.matrix[i][j].value = 2;
       }
       if(this.checkVictory(i,j)){ // Victory Condition
         this.setVictory();
         var player1 = (this.turn) ? this.firstPlayer : this.secondPlayer;
         var player2 = (!this.turn) ? this.firstPlayer : this.secondPlayer;
+        return true;
+      }
+
+      if(this.checkEnd()){ // If not victory but last move, end round
+        this.end = true;
+        document.getElementById("status").innerHTML = "No One Wins!";
         return true;
       }
     } else {
@@ -127,12 +146,17 @@ class Board {
 
     var i, j, value;
     do {
+
+        /* Need to see if they've exhausted all options */
+        /* Insert Code Here */
+
         i = Math.floor(Math.random() * 30) % this.size;
         j = Math.floor(Math.random() * 30) % this.size;
         value = this.matrix[i][j].value;
         console.log(i,j);
 
         if (value == 0){
+          // Adding Timer makes random Move weird
           this.setMove(i,j);
           break;
         }
@@ -144,7 +168,9 @@ class Board {
   /* Fill Matrix */
   /* Fill Dom and attach events */
   initializeBoard(boardDom){
+    this.end = false;
     this.matrix = []
+    document.getElementById("status").innerHTML = "";
     var n = this.size;
     boardDom.style.width = boardDom.style.height = parseInt(n * 100) + "px";
     boardDom.innerHTML = ""; // Clear Current Board
@@ -209,6 +235,15 @@ class Board {
     return false;
   }
 
+  checkEnd(){
+    for (var i = 0; i < this.size; i++ ){
+      for (var j = 0; j < this.size; j++ ){
+        if (this.matrix[i][j].value == 0) return false;
+      }
+    }
+    return true;
+  }
+
   checkVictory(i, j){
     var bool = true, val = this.matrix[i][j].value; // The Current Value
     var n = this.size;
@@ -220,7 +255,7 @@ class Board {
       if (this.matrix[i][c].value == val) verticalTally++;
     }
     if (horizonTally == n || verticalTally == n){
-      alert("Victory!");
+      // alert("Victory!");
       return true;
     }
 
@@ -259,7 +294,7 @@ class Board {
   }
 
   startGame(){
-    alert("mode is " + this.mode);
+    // alert("mode is " + this.mode);
     if(this.mode == 2){
       this.npcGame();
     }
