@@ -3,27 +3,34 @@
   <head>
     <link rel="stylesheet" href="style.css">
   </head>
-
-  <div id="settings">
-    <div class="board-setting">
-         N Clicked
-      <ul>
-        <input class="options" type="text" text="3x3" value="3">
-        <input class="options" type="text" text="3x3" value="4">
-        <input class="options" type="text" text="3x3" value="5">
-      </ul>
-      <ul>
-        <input class="modes" type="text" text="3x3" value="0">
-        <input class="modes" type="text" text="3x3" value="1">
-        <input class="modes" type="text" text="3x3" value="2">
-      </ul>
-    </div>
-    <div class="player-setting"></div>
-  </div>
-  <div id="board" class="board" ></div>
-  <button id="random"> Random Move </button>
-
   <body>
+
+  <div id="board" class="board" ></div>
+  <div class="settings">
+      <h3>Board Size</h3>
+      <ul class="setting-options">
+        <span class="options selected"> 3x3 </span>
+        <span class="options"> 4x4 </span>
+        <span class="options"> 5x5 </span>
+      </ul>
+      <h3>Modes</h3>
+      <ul class="setting-options">
+        <span class="modes selected" type="text" text="3x3" value="0"> PVP </span>
+        <span class="modes" type="text" text="3x3" value="1"> PVC </span>
+        <span class="modes" type="text" text="3x3" value="2"> CVC </span>
+      </ul>
+    <button id="setting-submit">Submit</button>
+  </div>
+    <button id="start">Start Game</button>
+    <button id="clear">Clear Board</button>
+    <button id="settings-reveal">Settings</button>
+    <button id="score-board-reveal">Score</button>
+
+    <div class="score-board">
+      <h3 id="scores">Scores
+      </h3>
+    </div>
+
     <script src="board.js"></script>
     <script src="script.js"></script>
   </body>

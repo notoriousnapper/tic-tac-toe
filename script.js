@@ -5,34 +5,67 @@
  */
 // generateBoard(3);
 var b = new Board();
-b.initializeBoard(4, 0, document.getElementById("board"));
+b.initializeBoard(document.getElementById("board"));
 // b.npcGame();
 
 /* Attaching Buttons */
+// Attaching Start Button
+document.getElementById("start").addEventListener("click",
+  function(e){
+    b.initializeBoard(document.getElementById("board"));
+    b.startGame();
+    console.log("Starting Game!");
+});
+
+// Attaching Setting Submit Button
+document.getElementById("setting-submit").addEventListener("click",
+  function(e){
+    b.initializeBoard(document.getElementById("board"));
+    console.log("Settings Set!");
+});
+
+// Clearing Board
+document.getElementById("clear").addEventListener("click",
+  function(e){
+    b.clearBoard();
+    console.log("Clearing Board");
+});
+
+
 var options = document.getElementsByClassName("options");
 var modes = document.getElementsByClassName("modes");
 for (var i = 0; i < options.length; i++){
   // Careful ^ 3 modes and 3 settings
-  var value = options[i].value;
-  var value2 = modes[i].value;
+  var value = i + 3;
+  var value2 = i;
   console.log("Initial val is: " + value);
+
 
   options[i].addEventListener("click",
   (function(value, e){
     return function(e){
-      // generateBoard(e.target.value);
-      b.initializeBoard(value, 0, e.target.value);
-      console.log("Value is " + e.target.value)
+      // b.initializeBoard(value,  e.target.value);
+      b.changeSize(value);
+      for (var i = 0; i < options.length; i++)
+        options[i].className = "options";
+      e.target.className += " selected";
     }
   }) // Callback
   (value));
 
   modes[i].addEventListener("click",
-  (function(value2){
-    return function(){
+  (function(value2, e){
+    return function(e){
       b.changeMode(value2);
+      for (var i = 0; i < options.length; i++)
+        modes[i].className = "modes";
+      e.target.className += " selected";
     }
   }) // Callback
   (value2)
 );
 }
+
+b.printScore();
+// Attach Setting Submit Button
+// Attach StartGame Button

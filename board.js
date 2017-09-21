@@ -1,6 +1,6 @@
 class Board {
   constructor(){
-    this.size = 0
+    this.size = 3 // Default Size
     this.turn = 0 // Player 1
     this.mode = 0 // PVC
     this.matrix = []
@@ -10,74 +10,92 @@ class Board {
     this.customMove = null;
     this.score = [
       {  // Human Player #1
+         name: "Human Player 1",
          win: 0,
          loss:0
       },
       {  // Human Player #2
+         name: "Human Player 2",
          win: 0,
          loss:0
       },
       {  // NPC #1
+         name: "Computer Player 1",
          win: 0,
          loss:0
       },
       {  // NPC #2
+         name: "Computer Player 2",
          win: 0,
          loss:0
       }
     ]
   }
   printScore(){
+    var scoreBoard = document.getElementById("scores");
+    var score;
+    scoreBoard.innerHTML = "";
+    console.log("Printing Score");
     for (var i = 0; i < this.score.length; i++){
+      score = document.createElement("div");
+      score.innerHTML = "<span class=\"score-name\">" + this.score[i].name + "</span>";
+      score.innerHTML += "wins: " + this.score[i].win;
+      score.innerHTML += " and losses: " + this.score[i].loss;
+      scoreBoard.append(score);
       console.log(this.score[i]);
     }
   }
   clearBoard(){
     this.matrix = []
     this.end = false;
-    document.getElementById("board").innerHTML = "";
+    // Change the color/ background
+    var children =  document.getElementById("board").childNodes;
+    for (var i = 0; i < children.length; i ++){
+      children[i].style.backgroundColor = "white";
+    }
+  }
+
+  changeSize(size){
+    this.size = size;
   }
 
   changeMode(mode){
     this.mode = parseInt(mode);
     console.log("Changing to the following mode: " + mode);
-    var board = document.getElementById("board");
-    // this.initializeBoard(this.size, this.mode, board);
+    // this.clearBoard();
     switch(mode){
-      case "0":  // PvP
+      case 0:  // PvP
         this.firstPlayer = 0
         this.secondPlayer = 1
         break;
-      case "1":  // P1vC
+      case 1:  // P1vC
         this.firstPlayer = 0
         this.secondPlayer = 2
         break;
-      case "2":  // CvC
+      case 2:  // CvC
         this.firstPlayer = 2
         this.secondPlayer = 3
-        this.npcGame();
         break;
       default:
         console.log("What is going on" + mode);
     }
   }
 
-  setVictory(turn){
+  setVictory(){
     this.end = true;
-    if (turn){
-      this.score[this.firstPlayer] = this.score[this.firstPlayer].win + 1
-      this.score[this.secondPlayer] = this.score[this.secondPlayer].loss + 1
+    if (this.turn){
+      this.score[this.firstPlayer].win = this.score[this.firstPlayer].win + 1
+      this.score[this.secondPlayer].loss = this.score[this.secondPlayer].loss + 1
     }
     else {
-      this.score[this.firstPlayer] = this.score[this.firstPlayer].loss + 1
-      this.score[this.secondPlayer] = this.score[this.secondPlayer].win + 1
+      this.score[this.firstPlayer].loss = this.score[this.firstPlayer].loss + 1
+      this.score[this.secondPlayer].win = this.score[this.secondPlayer].win + 1
     }
     this.printScore();
   }
 
   setMove(i, j){
     if (this.end) return; // End Game
-
     var validMove = true;
     var elem = this.matrix[i][j].elem, value = this.matrix[i][j].value;
     if (value == 0){ // Unassigned board gets assigned
@@ -91,10 +109,8 @@ class Board {
       }
       if(this.checkVictory(i,j)){ // Victory Condition
         this.setVictory();
-        var player1 = (turn) ? this.firstPlayer : this.secondPlayer;
-        var player2 = (!turn) ? this.firstPlayer : this.secondPlayer;
-        alert("Player #" + player1 + "won!");
-        alert("Player #" + player2 + "lost!");
+        var player1 = (this.turn) ? this.firstPlayer : this.secondPlayer;
+        var player2 = (!this.turn) ? this.firstPlayer : this.secondPlayer;
         return true;
       }
     } else {
@@ -105,41 +121,6 @@ class Board {
     this.turn = !this.turn;
     return validMove;
   }
-
-  /* Fill Matrix */
-  /* Fill Dom and attach events */
-  initializeBoard(n, mode, frameDom){
-    this.size = n
-    this.matrix = []
-    this.changeMode(mode);
-    var boardDom =  document.getElementById("board");
-    boardDom.style.width = boardDom.style.height = parseInt(n * 100) + "px";
-    boardDom.innerHTML = ""; // Clear Current Board
-
-    var cell, coordinates;
-    var i = n, j= n, temp = [];
-
-    var t = this;
-
-    for (i = 0; i < n; i++){
-      for (j = 0; j < n; j++){
-        coordinates = { i: i, j: j };
-        cell = document.createElement("div");  // HTML Appending Code
-        cell.className = "cell";
-        cell.addEventListener("click", (function(coordinates, elem){
-          return function(){
-            t.setMove(coordinates.i, coordinates.j);
-          }
-        })(coordinates));
-        boardDom.append(cell); // Add Cell To Board
-        temp.push({elem: cell, value: 0});
-      }
-        this.matrix.push(temp);
-        temp = [];
-    }
-    console.log("Generated Board: " + n);
-  }
-
 
   randomMove(){
     if (this.end) return; // End Victory
@@ -159,6 +140,48 @@ class Board {
     while (true);
     return [i, j];
   }
+
+  /* Fill Matrix */
+  /* Fill Dom and attach events */
+  initializeBoard(boardDom){
+    this.matrix = []
+    var n = this.size;
+    boardDom.style.width = boardDom.style.height = parseInt(n * 100) + "px";
+    boardDom.innerHTML = ""; // Clear Current Board
+
+    var cell, coordinates;
+    var i = n, j= n, temp = [];
+
+    var t = this;
+
+    for (i = 0; i < n; i++){
+      for (j = 0; j < n; j++){
+        coordinates = { i: i, j: j };
+        cell = document.createElement("div");  // HTML Appending Code
+        cell.className = "cell";
+        cell.addEventListener("click", (function(coordinates, elem){
+          if (!t.mode){
+            return function(){
+              t.setMove(coordinates.i, coordinates.j);
+            }
+          }
+          else {
+            return function(){
+              t.setMove(coordinates.i, coordinates.j);
+              t.randomMove();
+            }
+          }
+        })(coordinates));
+        boardDom.append(cell); // Add Cell To Board
+        temp.push({elem: cell, value: 0});
+      }
+        this.matrix.push(temp);
+        temp = [];
+    }
+    console.log("Generated Board: " + n);
+  }
+
+
 
   leftDiagonalTraversal(val){
     var i = 0, j = 0, tally = 0;
@@ -205,17 +228,16 @@ class Board {
     // Corner Check (if its a corner element)
     if ((i == j) && ( i == Math.floor(n/2))){
       if (this.leftDiagonalTraversal(val)){
-        alert("Left Diagonal Victory!");
+        // alert("Left Diagonal Victory!");
         return true;
       } else if (this.rightDiagonalTraversal(val)){
-        alert("Right to Left Diagonal Victory!");
+        // alert("Right to Left Diagonal Victory!");
         return true;
       }
     }
     if (i == j){ // Left Side
       if (this.leftDiagonalTraversal(val)){
-        alert("HERE");
-        alert("Left to Right Diagonal Victory!");
+        // alert("Left to Right Diagonal Victory!");
         return true;
       }
     }
@@ -223,7 +245,7 @@ class Board {
     else if (this.isRightDiagonal(i,j)) {
         // alert("isRight and Left to Right Diagonal Victory!");
       if (this.rightDiagonalTraversal(val)){
-        alert("isRight and Left to Right Diagonal Victory!");
+        // alert("isRight and Left to Right Diagonal Victory!");
         return true;
       }
     }
@@ -231,8 +253,18 @@ class Board {
   }
 
   npcGame(){
-    while (!this.end) {
-      this.randomMove();
+      for (var i =0; i < (this.size * this.size); i++){
+        this.randomMove();
+      }
+  }
+
+  startGame(){
+    alert("mode is " + this.mode);
+    if(this.mode == 2){
+      this.npcGame();
+    }
+    else {
+      console.log("Not CVC");
     }
   }
 }
